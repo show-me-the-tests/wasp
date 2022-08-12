@@ -5,10 +5,11 @@ module Wasp.Generator.ServerGenerator.ConfigG
 where
 
 import Data.Aeson (object, (.=))
+import Data.Char (toLower)
 import StrongPath (File', Path', Rel, relfile, (</>))
 import qualified StrongPath as SP
 import Wasp.AppSpec (AppSpec)
-import Wasp.AppSpec.Valid (isAuthEnabled)
+import Wasp.AppSpec.Valid (isAuthEnabled, isPostgresUsed)
 import Wasp.Generator.FileDraft (FileDraft)
 import Wasp.Generator.Monad (Generator)
 import qualified Wasp.Generator.ServerGenerator.Common as C
@@ -20,7 +21,8 @@ genConfigFile spec = return $ C.mkTmplFdWithDstAndData tmplFile dstFile (Just tm
     dstFile = C.serverSrcDirInServerRootDir </> configFileInSrcDir
     tmplData =
       object
-        [ "isAuthEnabled" .= (isAuthEnabled spec :: Bool)
+        [ "isAuthEnabled" .= (isAuthEnabled spec :: Bool),
+          "isPostgresUsed" .= (map toLower . show $ isPostgresUsed spec)
         ]
 
 configFileInSrcDir :: Path' (Rel C.ServerSrcDir) File'

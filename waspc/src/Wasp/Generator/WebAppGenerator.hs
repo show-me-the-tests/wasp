@@ -84,7 +84,6 @@ npmDepsForWasp _spec =
     { N.waspDependencies =
         AS.Dependency.fromList
           [ ("axios", "^0.21.1"),
-            ("lodash", "^4.17.15"),
             ("react", "^16.12.0"),
             ("react-dom", "^16.12.0"),
             ("react-query", "^3.34.19"),

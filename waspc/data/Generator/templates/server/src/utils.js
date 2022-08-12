@@ -45,3 +45,31 @@ export const prismaErrorToHttpError = (e) => {
 }
 
 export const sleep = ms => new Promise(r => setTimeout(r, ms))
+
+export function formatErrorString(errors) {
+  return '\n\n --- ERROR ----------------------------------------------- \n' +
+    errors.map(e => '\n [wasp] ' + e).join() +
+    '\n\n\n'
+}
+
+// Deeply merges the properties from obj into baseObj.
+export function deepMergeObjects(baseObj, obj) {
+  for (let prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      baseObj[prop] = updateValue(baseObj[prop], obj[prop])
+    }
+  }
+  return baseObj
+}
+
+function updateValue(existingVal, newVal) {
+  if (Array.isArray(existingVal) && Array.isArray(newVal)) {
+    for (const [i, val] of newVal.entries()) {
+      existingVal[i] = updateValue(existingVal[i], val)
+    }
+    return existingVal
+  } else if (existingVal?.constructor === Object && newVal?.constructor === Object) {
+    return deepMergeObjects(existingVal, newVal)
+  }
+  return newVal
+}

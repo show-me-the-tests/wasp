@@ -1,5 +1,5 @@
 {{={= =}=}}
-import _ from 'lodash'
+import { formatErrorString, deepMergeObjects } from './utils.js'
 
 const env = process.env.NODE_ENV || 'development'
 
@@ -16,24 +16,39 @@ const config = {
     {=# isAuthEnabled =}
     auth: {
       jwtSecret: undefined
-    }
+    },
     {=/ isAuthEnabled =}
   },
   development: {
     {=# isAuthEnabled =}
     auth: {
       jwtSecret: 'DEVJWTSECRET'
-    }
+    },
     {=/ isAuthEnabled =}
   },
   production: {
     {=# isAuthEnabled =}
     auth: {
       jwtSecret: process.env.JWT_SECRET
-    }
+    },
     {=/ isAuthEnabled =}
   }
 }
 
-const resolvedConfig = _.merge(config.all, config[env])
+const resolvedConfig = deepMergeObjects(config.all, config[env])
+
+configChecks(resolvedConfig)
+
 export default resolvedConfig
+
+function configChecks(_config) {
+  const isPostgresUsed = {= isPostgresUsed =}
+
+  if (isPostgresUsed && !process.env.DATABASE_URL) {
+    const errorStr = formatErrorString([
+      'No DATABASE_URL environment variable was found! This is required when using PostgreSQL.',
+      'Please set this and try again. Ref: https://wasp-lang.dev/docs/language/features#env'
+    ])
+    throw errorStr
+  }
+}

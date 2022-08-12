@@ -5,6 +5,7 @@ module Wasp.AppSpec.Valid
     ValidationError (..),
     getApp,
     isAuthEnabled,
+    isPostgresUsed,
   )
 where
 
